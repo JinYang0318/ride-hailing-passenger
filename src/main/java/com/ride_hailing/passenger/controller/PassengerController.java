@@ -31,7 +31,8 @@ public class PassengerController {
     }
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PassengerDTO>> getPassengerByIds(@RequestParam("id") List<Integer> passengerIds) {
+    public ResponseEntity<List<PassengerDTO>> getPassengerByIds(
+            @RequestParam(value = "id", required = false) List<Integer> passengerIds) {
         List<PassengerDTO> passengerDTOList = passengerService.getPassengerByIds(passengerIds);
         List<Integer> returnedIds = passengerDTOList
                 .stream()
@@ -50,11 +51,26 @@ public class PassengerController {
         return ResponseEntity.ok().headers(headers).body(passengerDTOList);
     }
 
+    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PassengerDTO>> getAllPassengers() {
+        List<PassengerDTO> passengerDTOList = passengerService.getAllPassengers();
+        return ResponseEntity.ok().body(passengerDTOList);
+    }
+
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PassengerDTO> createPassenger(@Valid @RequestBody PassengerDTO passengerDTO) {
         return passengerService.createPassenger(passengerDTO)
                 .map(passenger -> ResponseEntity.status(HttpStatus.CREATED).body(passenger))
                 .orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+    }
+
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PassengerDTO> updatePassenger(
+            @PathVariable("id") Integer passengerId,
+            @Valid @RequestBody PassengerDTO passengerDTO) {
+        return passengerService.updatePassenger(passengerId, passengerDTO)
+                .map(passenger -> ResponseEntity.status(HttpStatus.OK).body(passenger))
+                .orElseThrow(() -> new NotFoundException("Passenger Id With " + passengerId + " not found"));
     }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,5 +83,4 @@ public class PassengerController {
         }
         return ResponseEntity.status(HttpStatus.OK).body("Passenger with ID " + passengerId + " successfully deleted.");
     }
-
 }

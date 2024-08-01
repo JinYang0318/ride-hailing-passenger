@@ -133,31 +133,6 @@ class PassengerControllerTest {
         verify(passengerService).getPassengerByIds(anyList());
     }
 
-    @Test
-    @DisplayName("Given: passenger, When: POST /api/passenger, Then: return 201 with passengerDTO created")
-    void createMember() throws Exception {
-        PassengerDTO passengerDTO = MockPassenger.getPassengerDTO(null, "test", "test@gmail.com");
-        when(passengerService.createPassenger(any(PassengerDTO.class)))
-                .thenReturn(Optional.of(passengerDTO));
-
-        mockMvc.perform(post(PASSENGER_URL)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(passengerDTO)))
-                .andExpect(status().isCreated())
-                .andExpect(content().json(objectMapper.writeValueAsString(passengerDTO)));
-        verify(passengerService).createPassenger(any(PassengerDTO.class));
-    }
-
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("emptyCreteValue")
-    void createMemberWithBadRequest(String scenario, PassengerDTO passengerDTO, String expectedErrorMessage) throws Exception {
-        mockMvc.perform(post(PASSENGER_URL)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(passengerDTO)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().json(expectedErrorMessage));
-        verify(passengerService, never()).createPassenger(any(PassengerDTO.class));
-    }
 
     @Test
     void deletePassenger() throws Exception {

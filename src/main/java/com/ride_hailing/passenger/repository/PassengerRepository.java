@@ -4,6 +4,7 @@ import com.ride_hailing.passenger.model.Passenger;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository

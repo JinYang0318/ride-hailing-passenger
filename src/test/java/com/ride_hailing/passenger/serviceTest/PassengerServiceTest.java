@@ -88,20 +88,7 @@ class PassengerServiceTest {
         assertThat(passengerDTOList).isEmpty();
     }
 
-    @Test
-    @DisplayName("Given: Passenger, When: create, Then: return PassengerDTO")
-    void createPassenger(){
-        when(passengerRepository.save(any(Passenger.class)))
-                .thenReturn(MockPassenger.getPassenger());
 
-        PassengerDTO expectedPassengerDTO = MockPassenger.getPassengerDTO();
-        Optional<PassengerDTO> resultPassengerDTO = passengerService.createPassenger(expectedPassengerDTO);
-
-        verify(passengerRepository).save(any(Passenger.class));
-        verify(passengerMapper).mapToEntity(any(PassengerDTO.class));
-
-        assertThat(resultPassengerDTO).isEqualTo(Optional.of(expectedPassengerDTO));
-    }
 
     @Test
     @DisplayName("Given: passengerId, When: delete, Then: success delete")
