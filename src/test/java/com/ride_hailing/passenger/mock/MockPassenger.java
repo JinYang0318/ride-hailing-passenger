@@ -4,12 +4,9 @@ import com.ride_hailing.passenger.dto.PassengerDTO;
 import com.ride_hailing.passenger.model.Passenger;
 
 public class MockPassenger {
-    public static PassengerDTO getPassengerDTO() {
-        return PassengerDTO.builder()
-                .passengerId(1)
-                .name("test")
-                .email("test@email.com")
-                .build();
+
+    public static PassengerDTO getPassengerDTO(){
+        return getPassengerDTO(null, "test", "test@email.com");
     }
 
     public static PassengerDTO getPassengerDTO(Integer id, String name, String email) {
@@ -20,11 +17,17 @@ public class MockPassenger {
                 .build();
     }
 
+
     public static Passenger getPassenger() {
+        return getPassenger(null);
+    }
+
+    public static Passenger getPassenger(Integer id) {
         return Passenger.builder()
-                .passengerId(1)
+                .passengerId(id)
                 .name("test")
                 .email("test@email.com")
                 .build();
     }
+
 }

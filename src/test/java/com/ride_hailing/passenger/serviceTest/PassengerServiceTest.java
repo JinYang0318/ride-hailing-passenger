@@ -1,6 +1,7 @@
 package com.ride_hailing.passenger.serviceTest;
 
 import com.ride_hailing.passenger.dto.PassengerDTO;
+import com.ride_hailing.passenger.mapper.Mapper;
 import com.ride_hailing.passenger.mapper.PassengerMapper;
 import com.ride_hailing.passenger.mock.MockPassenger;
 import com.ride_hailing.passenger.model.Passenger;
@@ -34,14 +35,14 @@ class PassengerServiceTest {
     private PassengerRepository passengerRepository;
 
     @SpyBean
-    private PassengerMapper passengerMapper;
+    private Mapper<Passenger, PassengerDTO> passengerMapper;
 
     @Test
     @DisplayName("Given: passengerId found, When: getPassengerById, Then: return PassengerDTO")
-    void getPassengerById(){
-        Optional<PassengerDTO> expectedPassengerDTO = Optional.of(MockPassenger.getPassengerDTO());
+    void getPassengerById() {
+        Optional<PassengerDTO> expectedPassengerDTO = Optional.of(MockPassenger.getPassengerDTO(1, "test", "test@email.com"));
         when(passengerRepository.findByPassengerId(anyInt()))
-                .thenReturn(Optional.of(MockPassenger.getPassenger()));
+                .thenReturn(Optional.of(MockPassenger.getPassenger(1)));
 
         Optional<PassengerDTO> resultPassengerDTO = passengerService.getPassengerById(1);
         verify(passengerRepository).findByPassengerId(1);
@@ -52,22 +53,22 @@ class PassengerServiceTest {
 
     @Test
     @DisplayName("Given: passengerId not found, When: getPassengerById, Then: return empty PassengerDTO")
-    void getPassengerByIdNotFound(){
+    void getPassengerByIdNotFound() {
         when(passengerRepository.findByPassengerId(anyInt()))
                 .thenReturn(Optional.empty());
         Optional<PassengerDTO> passengerDTO = passengerService.getPassengerById(1);
         verify(passengerRepository).findByPassengerId(1);
-        verify(passengerMapper,never()).mapToDTO(any(Passenger.class));
+        verify(passengerMapper, never()).mapToDTO(any(Passenger.class));
 
         assertThat(passengerDTO).isEmpty();
     }
 
     @Test
     @DisplayName("Given: passengerIds found, When: getPassengerByIds, Then: return PassengerDTO list")
-    void getPassengerByIds(){
-        List<PassengerDTO> expectedPassengerDTOList =List.of(MockPassenger.getPassengerDTO());
+    void getPassengerByIds() {
+        List<PassengerDTO> expectedPassengerDTOList = List.of(MockPassenger.getPassengerDTO(1, "test", "test@email.com"));
         when(passengerRepository.findAllById(anyList()))
-                .thenReturn(List.of(MockPassenger.getPassenger()));
+                .thenReturn(List.of(MockPassenger.getPassenger(1)));
 
         List<PassengerDTO> resultPassengerDTOList = passengerService.getPassengerByIds(List.of(1));
         verify(passengerRepository).findAllById(List.of(1));
@@ -78,23 +79,61 @@ class PassengerServiceTest {
 
     @Test
     @DisplayName("Given: passengerIds not found, When: getPassengerByIds, Then: return empty PassengerDTO list")
-    void getPassengerByIdsNotFound(){
+    void getPassengerByIdsNotFound() {
         when(passengerRepository.findAllById(anyList()))
                 .thenReturn(Collections.emptyList());
         List<PassengerDTO> passengerDTOList = passengerService.getPassengerByIds(List.of(1));
         verify(passengerRepository).findAllById(List.of(1));
-        verify(passengerMapper,never()).mapToDTO(any(Passenger.class));
+        verify(passengerMapper, never()).mapToDTO(any(Passenger.class));
 
         assertThat(passengerDTOList).isEmpty();
     }
 
+    @Test
+    @DisplayName("Given: - , When: getAllPassengers, Then: return passengerDTO")
+    void getAllPassengers() {
+        List<PassengerDTO> expectedPassengerDTOList = List.of(MockPassenger.getPassengerDTO(1, "test", "test@email.com"));
+        when(passengerRepository.findAll()).thenReturn(List.of(MockPassenger.getPassenger(1)));
 
+        List<PassengerDTO> resultPassengerDTOList = passengerService.getAllPassengers();
+
+        verify(passengerRepository).findAll();
+        verify(passengerMapper).mapToDTO(any(Passenger.class));
+        assertThat(resultPassengerDTOList).isEqualTo(expectedPassengerDTOList);
+    }
+
+    @Test
+    @DisplayName("Given: passenger, When: createPassenger, Then: return passengerDTO")
+    void createPassenger() {
+        Optional<PassengerDTO> expectedPassengerDTO  = Optional.of(MockPassenger.getPassengerDTO(1, "test", "test@email.com"));
+        when(passengerRepository.save(any(Passenger.class))).thenReturn(MockPassenger.getPassenger(1));
+
+        Optional<PassengerDTO> resultPassengerDTO = passengerService.createPassenger(expectedPassengerDTO.get());
+        verify(passengerRepository).save(any());
+        verify(passengerMapper).mapToDTO(any(Passenger.class));
+        assertThat(resultPassengerDTO).isEqualTo(expectedPassengerDTO);
+    }
+
+    @Test
+    @DisplayName("Given: passengerId and passenger, When updatePassenger, Then: return passengerDTO")
+    void updatePassenger() {
+        when(passengerRepository.findById(anyInt())).thenReturn(Optional.of(MockPassenger.getPassenger(1)));
+        when(passengerRepository.save(any(Passenger.class))).thenReturn(MockPassenger.getPassenger(1));
+
+        Optional<PassengerDTO> expectedPassengerDTO  = Optional.of(MockPassenger.getPassengerDTO(1, "test", "test@email.com"));
+        Optional<PassengerDTO> resultPassengerDTO = passengerService.updatePassenger(1, expectedPassengerDTO.get());
+
+        verify(passengerRepository).save(any());
+        verify(passengerMapper).mapToDTO(any(Passenger.class));
+        assertThat(resultPassengerDTO).isEqualTo(expectedPassengerDTO);
+    }
 
     @Test
     @DisplayName("Given: passengerId, When: delete, Then: success delete")
-    void deletePassenger(){
-       passengerRepository.deleteById(1);
-       verify(passengerRepository).deleteById(1);
-       assertThat(passengerRepository.findById(1)).isEmpty();
+    void deletePassenger() {
+        when(passengerRepository.findById(1)).thenReturn(Optional.of(MockPassenger.getPassenger(1)));
+        passengerService.deletePassenger(1);
+
+        verify(passengerRepository).deleteById(1);
     }
 }

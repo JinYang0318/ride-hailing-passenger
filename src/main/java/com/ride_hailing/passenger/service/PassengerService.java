@@ -30,7 +30,8 @@ public class PassengerService {
 
     public List<PassengerDTO> getAllPassengers() {
         return passengerRepository.findAll()
-                .stream().map(passengerMapper::mapToDTO)
+                .stream()
+                .map(passengerMapper::mapToDTO)
                 .toList();
     }
 

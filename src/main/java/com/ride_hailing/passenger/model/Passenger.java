@@ -6,10 +6,11 @@ import lombok.*;
 @Entity
 @Table(name = "Passenger")
 @Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode
 public class Passenger {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

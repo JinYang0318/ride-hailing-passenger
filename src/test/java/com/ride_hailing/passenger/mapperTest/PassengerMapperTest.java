@@ -21,5 +21,13 @@ class PassengerMapperTest {
         assertThat(mapper.mapToDTO(passenger)).isEqualTo(passengerDTO);
     }
 
+    @Test
+    @DisplayName("Given: passengerDTO, When: mapToEntity, Then: return passenger")
+    void mapToEntity(){
+        Passenger passenger = MockPassenger.getPassenger();
+        PassengerDTO passengerDTO = MockPassenger.getPassengerDTO();
+
+        assertThat(mapper.mapToEntity(passengerDTO)).isEqualTo(passenger);
+    }
 
 }

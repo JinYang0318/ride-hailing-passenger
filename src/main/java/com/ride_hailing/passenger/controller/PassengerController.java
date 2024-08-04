@@ -61,7 +61,7 @@ public class PassengerController {
     public ResponseEntity<PassengerDTO> createPassenger(@Valid @RequestBody PassengerDTO passengerDTO) {
         return passengerService.createPassenger(passengerDTO)
                 .map(passenger -> ResponseEntity.status(HttpStatus.CREATED).body(passenger))
-                .orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+                .orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
     }
 
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
