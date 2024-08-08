@@ -75,12 +75,9 @@ public class PassengerController {
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> deletePassenger(@PathVariable("id") Integer passengerId) {
-        Optional<PassengerDTO> passengerDTO = passengerService.getPassengerById(passengerId);
-        if (passengerDTO.isPresent()) {
-            passengerService.deletePassenger(passengerId);
-        } else {
-            throw new NotFoundException("Passenger Id With " + passengerId + " not found");
-        }
+        PassengerDTO passengerDTO = passengerService.getPassengerById(passengerId)
+                .orElseThrow(() -> new NotFoundException("Passenger Id With " + passengerId + " not found"));
+
         return ResponseEntity.status(HttpStatus.OK).body("Passenger with ID " + passengerId + " successfully deleted.");
     }
 }
